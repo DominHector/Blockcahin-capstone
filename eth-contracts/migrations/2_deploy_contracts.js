@@ -5,7 +5,7 @@ module.exports = function(deployer) {
   deployer.deploy(SquareVerifier).then(() => deployer.deploy(SolnSquareVerifier, SquareVerifier.address)).then( async () => {
     var contract = await SolnSquareVerifier.deployed();
 
-    var account = '0x9AC86711b5b63f99bf531cF63660287f2B73e61A';
+    var account = '0x652BDF6dFF6e513D2B343502201A5b6661DEA495';
 
     var proof = [
       require("../../zokrates/code/square/proof_0.json"),

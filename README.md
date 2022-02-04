@@ -7,6 +7,12 @@ npm install
 npm install --save truffle-hdwallet-provider
 ```
 
+### Versions
+```
+Node: v15.11.0
+Truffle: v5.2.4
+Solidity: ^0.5.0
+```
 
 ### ZOKATES - ZERO KNOWLEDGE PROOF
 #### Code:
@@ -26,11 +32,31 @@ def main(private field a, field b) -> (field):
 7. zokrates export-verifier
 ```
 
-### Versions
+### Tests 
 ```
-Node: v15.11.0
-Truffle: v5.2.4
-Solidity: ^0.5.0
+  Contract: TestERC721Mintable
+    match erc721 spec
+      ✓ should return total supply (78ms)
+      ✓ should get token balance
+      ✓ should return token uri
+result [object Object]
+      ✓ should transfer token from one owner to another (865ms)
+    have ownership properties
+      ✓ should fail when minting when address is not contract owner
+      ✓ should return contract owner (170ms)
+```
+```
+  Contract: SolnSquareVerifier
+    Test - SolnSquareVerifier
+      ✓ should add new solutions (135ms)
+      ✓ should mint tokens for contract (1017ms)
+```
+
+```
+  Contract: TestVerifier
+    Exercise Verifier
+      ✓ should verify with the correct proof (559ms)
+      ✓ should NOT verify with the incorrect proof (608ms)
 ```
 
 ### Migrate 

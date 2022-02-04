@@ -1,43 +1,37 @@
-const SolnSquareVerifier = artifacts.require('SolnSquareVerifier');
-const proof =
-{
-    "proof": {
-    "a": ["0x26e88aa03d5186566bb4540b33d1704f05fe3851910d8fc27c89f997e64e76e2", "0x038184db45429363a35b5808b22ca36a07b57a9a729b9469abeb24dea22b19fd"],
-        "b": [["0x174dfee9a4ad743d736c08d59e63f65ce003f3bc6a53f163a72cf5a92dfc4df5", "0x20d437a8db149ac2f33dbffe57221e842a545d55d5b8b3ea8401f6dd4cbcdd22"], ["0x1748a7e7bf4e20b95c488f6cd22b97e1a4a3b97e6d8567faf3e9f2dd56568216", "0x2830a5ce78e0bbcf4b4063124f64aadabb0cd12c3c0392adb90e80d70d33fe22"]],
-        "c": ["0x0acb35f554bbd3cc8f6655ceca48cadb63f4e60f99f455b43cf6b03ba3652c18", "0x2dd58f707316c16349c047f5d8517c336d73faad0ba2517e1e5dfc7d6445ffdb"]
-},
-    "inputs": ["0x0000000000000000000000000000000000000000000000000000000000000009", "0x0000000000000000000000000000000000000000000000000000000000000001"]
-}
+var SolnSquareVerifier = artifacts.require('SolnSquareVerifier');
+var SquareVerifier = artifacts.require('verifier');
 
-contract('TestSolnSquareVerifier', accounts => {
+contract('SolnSquareVerifier', accounts => {
 
-    describe('Exercise SolnSquareVerifier', function(){
-        beforeEach(async function() {
-            this.contract = await SolnSquareVerifier.new();
-        });
+    let proof = {
+                "proof": {
+                    "a": ["0x2a3cb83dde1107afd700cdc87d4e510c1961d0b61be523f3b8e892c86da72af1", "0x1e0a24aaeb28fb335673ca5f190054beed52b94e265cbe2eb882198bbfc77f30"],
+                    "b": [["0x027a837d089894c1174e3a31b6d2bc9c2ea5bcc52d512c40d96544cc628e0658", "0x0a9aa41fdc704e3d4c75e71e507ee5b7ffc633863cd2c531c2cb38860d4fee6e"],
+                          ["0x1421c7831dec7ffcdc49c0128ea3bc4f9311a6af22beeb70bec8fb006d832e1d", "0x3020ff798e78b68c69a0c1433090cce8c015d278e3c8789354a05350c8748b31"]],
+                    "c": ["0x0de91ea4ef79993cfc41a0b1b46c9f61d9f1af660c367e055ac7834ed91e1d83", "0x01688a8c9cc12cbaca9c3f9fde02b10bed4b7be2a70fe0264ab8435aff2470f4"
+                ]},
+                "inputs": ["0x0000000000000000000000000000000000000000000000000000000000000009", "0x0000000000000000000000000000000000000000000000000000000000000001"]
+            }
 
+    describe('Test - SolnSquareVerifier', function () {
+        beforeEach(async function () {
+            this.verifier = await SquareVerifier.new({ from: accounts[0] });
+            this.contract = await SolnSquareVerifier.new(this.verifier.address, { from: accounts[0] });
+        })
 
         // Test if a new solution can be added for contract - SolnSquareVerifier
-        it('should add new solutions', async function(){
-
-            let tx = await this.contract.addSolution(accounts[1], 1, proof.proof.a, proof.proof.b, proof.proof.c, proof.inputs, {from: accounts[0]});
-
-            let verified_event = tx.logs[0].event;
-            let added_event = tx.logs[1].event;
-            assert.equal(verified_event, 'Verified', 'Invalid event emitted');
-            assert.equal(added_event, 'SolutionAdded', 'Invalid event emitted');
-        });
-
+        it('should add new solutions', async function () {
+            console.log(proof.proof.inputs);
+            let key = await this.contract._verifierKey.call(proof.proof.a, proof.proof.b, proof.proof.c, proof.inputs);
+            let result = await this.contract.addSolution(2, accounts[1], key);
+            assert.equal(result.logs.length, 1, "Correct event not emitted");
+        })
 
         // Test if an ERC721 token can be minted for contract - SolnSquareVerifier
-        it('should mint tokens for contract', async function(){
-            await this.contract.addSolution(accounts[2], 1,  proof.proof.a,  proof.proof.b,  proof.proof.c, proof.inputs, {from: accounts[0]});
-            let tx = await this.contract.mint(accounts[2], 1, {from: accounts[0]});
+        it('should mint tokens for contract', async function () {
+            let result = await this.contract.mintToken(accounts[1], 2, proof.proof.a, proof.proof.b, proof.proof.c, proof.inputs, {from: accounts[0]});
+            assert.equal(result.logs[1].event, 'Transfer', 'Event Transfer not emitted');
+        })
 
-            let tokenTransferredEvent = tx.logs[0].event; //transferred == minted
-            console.log('tokenTransferredEvent ' + tokenTransferredEvent);
-
-            assert.equal(tokenTransferredEvent, 'Transfer', 'Invalid event emitted');
-        });
     });
 })
