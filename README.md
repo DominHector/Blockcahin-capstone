@@ -14,7 +14,15 @@ def main(private field a, field b) -> (field):
   field result = if a * a == b then 1 else 0 fi
   return result
 ```
-
+```
+1. Install Docker
+2. docker run -v /<path_preject>:/home/zokrates/code -ti zokrates/zokrates /bin/bash
+3. zokrates compile -i square.code
+4. zokrates setup
+5. zokrates compute-witness -a 3 9
+6. zokrates generate-proof
+7. zokrates export-verifier
+```
 
 ### Migrate 
 ```
