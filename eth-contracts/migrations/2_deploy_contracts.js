@@ -5,7 +5,7 @@ module.exports = function(deployer) {
   deployer.deploy(SquareVerifier).then(() => deployer.deploy(SolnSquareVerifier, SquareVerifier.address)).then( async () => {
     var contract = await SolnSquareVerifier.deployed();
 
-    var account = '0x9AC86711b5b63f99bf531cF63660287f2B73e61A';
+    var account = '0xC0Cd7b9EA1aDbcE25d5B346D3AE1Cc7cb00E515F';
 
     var proof = [
       require("../../zokrates/code/square/proof_0.json"),
@@ -24,7 +24,7 @@ module.exports = function(deployer) {
     for (let i = 0; i < items ; i++) {
       var item = i+1;
       var { proof: { a, b, c }, inputs: inputs } = proof[i];
-      await contract.mint(account, item, a, b, c, inputs, {from:account});
+      await contract.mintToken(account, item, a, b, c, inputs, {from:account});
     }
 
   });

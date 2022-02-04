@@ -37,26 +37,26 @@ contract SolnSquareVerifier is ERC721Mintable {
         emit solutionAdded(index, _address);
     }
 
-    struct G1Point {
-        uint X;
-        uint Y;
-    }
-
-    struct G2Point {
-        uint[2] X;
-        uint[2] Y;
-    }
-
-    struct Proof {
-        G1Point a;
-        G2Point b;
-        G1Point c;
-    }
+//    struct G1Point {
+//        uint X;
+//        uint Y;
+//    }
+//
+//    struct G2Point {
+//        uint[2] X;
+//        uint[2] Y;
+//    }
+//
+//    struct Proof {
+//        G1Point a;
+//        G2Point b;
+//        G1Point c;
+//    }
 
     // Create a function to mint new NFT only after the solution has been verified
     //  - make sure the solution is unique (has not been used before)
     //  - make sure you handle metadata as well as tokenSuplly
-    function mint (address to, uint256 tokenId, uint[2] memory a, uint[2][2] memory b, uint[2] memory c, uint[2] memory input) public {
+    function mintToken (address to, uint256 tokenId, uint[2] memory a, uint[2][2] memory b, uint[2] memory c, uint[2] memory input) public {
         bytes32 key = _verifierKey(a, b, c, input);
         require(uniqueSolutions[key] == address(0), "Solution has already been used");
         require(verifier.verifyTx(a,b,c,input), "Solution failed");

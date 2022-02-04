@@ -1,4 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-only
 // This file is LGPL3 Licensed
+pragma solidity ^0.5.16;
 
 /**
  * @title Elliptic curve operations on twist points for alt_bn128
@@ -234,7 +236,7 @@ library BN256G2 {
             mstore(add(freemem,0x60), a)
             mstore(add(freemem,0x80), sub(n, 2))
             mstore(add(freemem,0xA0), n)
-            success := staticcall(sub(gas, 2000), 5, freemem, 0xC0, freemem, 0x20)
+            success := staticcall(sub(gas(), 2000), 5, freemem, 0xC0, freemem, 0x20)
             result := mload(freemem)
         }
         require(success);
@@ -398,7 +400,7 @@ library BN256G2 {
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 // The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.16;
 library Pairing {
     struct G1Point {
         uint X;
@@ -416,10 +418,10 @@ library Pairing {
     /// @return the generator of G2
     function P2() pure internal returns (G2Point memory) {
         return G2Point(
-            [11559732032986387107991004021392285783925812861821192530917403151452391805634,
-            10857046999023057135944570762232829481370756359578518086990519993285655852781],
-            [4082367875863433681332203403145435568316851327593401208105741076214120093531,
-            8495653923123431417604973247489272438418190587263600148770280649306958101930]
+            [10857046999023057135944570762232829481370756359578518086990519993285655852781,
+            11559732032986387107991004021392285783925812861821192530917403151452391805634],
+            [8495653923123431417604973247489272438418190587263600148770280649306958101930,
+            4082367875863433681332203403145435568316851327593401208105741076214120093531]
         );
     }
     /// @return the negation of p, i.e. p.addition(p.negate()) should be zero.
@@ -430,8 +432,8 @@ library Pairing {
             return G1Point(0, 0);
         return G1Point(p.X, q - (p.Y % q));
     }
-    /// @return the sum of two points of G1
-    function addition(G1Point memory p1, G1Point memory p2) internal returns (G1Point memory r) {
+    /// @return r the sum of two points of G1
+    function addition(G1Point memory p1, G1Point memory p2) internal view returns (G1Point memory r) {
         uint[4] memory input;
         input[0] = p1.X;
         input[1] = p1.Y;
@@ -439,26 +441,26 @@ library Pairing {
         input[3] = p2.Y;
         bool success;
         assembly {
-            success := call(sub(gas, 2000), 6, 0, input, 0xc0, r, 0x60)
+            success := staticcall(sub(gas(), 2000), 6, input, 0xc0, r, 0x60)
         // Use "invalid" to make gas estimation work
             switch success case 0 { invalid() }
         }
         require(success);
     }
-    /// @return the sum of two points of G2
-    function addition(G2Point memory p1, G2Point memory p2) internal returns (G2Point memory r) {
-        (r.X[1], r.X[0], r.Y[1], r.Y[0]) = BN256G2.ECTwistAdd(p1.X[1],p1.X[0],p1.Y[1],p1.Y[0],p2.X[1],p2.X[0],p2.Y[1],p2.Y[0]);
+    /// @return r the sum of two points of G2
+    function addition(G2Point memory p1, G2Point memory p2) internal view returns (G2Point memory r) {
+        (r.X[0], r.X[1], r.Y[0], r.Y[1]) = BN256G2.ECTwistAdd(p1.X[0],p1.X[1],p1.Y[0],p1.Y[1],p2.X[0],p2.X[1],p2.Y[0],p2.Y[1]);
     }
-    /// @return the product of a point on G1 and a scalar, i.e.
+    /// @return r the product of a point on G1 and a scalar, i.e.
     /// p == p.scalar_mul(1) and p.addition(p) == p.scalar_mul(2) for all points p.
-    function scalar_mul(G1Point memory p, uint s) internal returns (G1Point memory r) {
+    function scalar_mul(G1Point memory p, uint s) internal view returns (G1Point memory r) {
         uint[3] memory input;
         input[0] = p.X;
         input[1] = p.Y;
         input[2] = s;
         bool success;
         assembly {
-            success := call(sub(gas, 2000), 7, 0, input, 0x80, r, 0x60)
+            success := staticcall(sub(gas(), 2000), 7, input, 0x80, r, 0x60)
         // Use "invalid" to make gas estimation work
             switch success case 0 { invalid() }
         }
@@ -468,7 +470,7 @@ library Pairing {
     /// e(p1[0], p2[0]) *  .... * e(p1[n], p2[n]) == 1
     /// For example pairing([P1(), P1().negate()], [P2(), P2()]) should
     /// return true.
-    function pairing(G1Point[] memory p1, G2Point[] memory p2) internal returns (bool) {
+    function pairing(G1Point[] memory p1, G2Point[] memory p2) internal view returns (bool) {
         require(p1.length == p2.length);
         uint elements = p1.length;
         uint inputSize = elements * 6;
@@ -477,15 +479,15 @@ library Pairing {
         {
             input[i * 6 + 0] = p1[i].X;
             input[i * 6 + 1] = p1[i].Y;
-            input[i * 6 + 2] = p2[i].X[0];
-            input[i * 6 + 3] = p2[i].X[1];
-            input[i * 6 + 4] = p2[i].Y[0];
-            input[i * 6 + 5] = p2[i].Y[1];
+            input[i * 6 + 2] = p2[i].X[1];
+            input[i * 6 + 3] = p2[i].X[0];
+            input[i * 6 + 4] = p2[i].Y[1];
+            input[i * 6 + 5] = p2[i].Y[0];
         }
         uint[1] memory out;
         bool success;
         assembly {
-            success := call(sub(gas, 2000), 8, 0, add(input, 0x20), mul(inputSize, 0x20), out, 0x20)
+            success := staticcall(sub(gas(), 2000), 8, add(input, 0x20), mul(inputSize, 0x20), out, 0x20)
         // Use "invalid" to make gas estimation work
             switch success case 0 { invalid() }
         }
@@ -493,7 +495,7 @@ library Pairing {
         return out[0] != 0;
     }
     /// Convenience method for a pairing check for two pairs.
-    function pairingProd2(G1Point memory a1, G2Point memory a2, G1Point memory b1, G2Point memory b2) internal returns (bool) {
+    function pairingProd2(G1Point memory a1, G2Point memory a2, G1Point memory b1, G2Point memory b2) internal view returns (bool) {
         G1Point[] memory p1 = new G1Point[](2);
         G2Point[] memory p2 = new G2Point[](2);
         p1[0] = a1;
@@ -507,7 +509,7 @@ library Pairing {
         G1Point memory a1, G2Point memory a2,
         G1Point memory b1, G2Point memory b2,
         G1Point memory c1, G2Point memory c2
-    ) internal returns (bool) {
+    ) internal view returns (bool) {
         G1Point[] memory p1 = new G1Point[](3);
         G2Point[] memory p2 = new G2Point[](3);
         p1[0] = a1;
@@ -524,7 +526,7 @@ library Pairing {
         G1Point memory b1, G2Point memory b2,
         G1Point memory c1, G2Point memory c2,
         G1Point memory d1, G2Point memory d2
-    ) internal returns (bool) {
+    ) internal view returns (bool) {
         G1Point[] memory p1 = new G1Point[](4);
         G2Point[] memory p2 = new G2Point[](4);
         p1[0] = a1;
@@ -542,8 +544,8 @@ library Pairing {
 contract Verifier {
     using Pairing for *;
     struct VerifyingKey {
-        Pairing.G1Point a;
-        Pairing.G2Point b;
+        Pairing.G1Point alpha;
+        Pairing.G2Point beta;
         Pairing.G2Point gamma;
         Pairing.G2Point delta;
         Pairing.G1Point[] gamma_abc;
@@ -554,16 +556,16 @@ contract Verifier {
         Pairing.G1Point c;
     }
     function verifyingKey() pure internal returns (VerifyingKey memory vk) {
-        vk.a = Pairing.G1Point(uint256(0x04a765058e880806101eae046479ed7083d05b518fc448921860787e255aebc4), uint256(0x2df04cadce790398a53aaf9a5951cb3434ca365c12b7b32ab7a06d57109acc16));
-        vk.b = Pairing.G2Point([uint256(0x1417cffe32ce8600e415aa753a3ebc31989b220cc856c6651381e32b1c036783), uint256(0x1e442a65c45299ac60948c483c02b84b107de754d11394de99e3af8d07f9adb0)], [uint256(0x3061c279d06e81f43df8918080268d8b8dfd55d467e77afdc4b3c56e049b6d8b), uint256(0x2d05b16b6408b8420e1dbc9483865f8996efa130761fe3d673ba8c91f668f7f0)]);
-        vk.gamma = Pairing.G2Point([uint256(0x16231002b123feba8630eb7fe76afd7b067ccd7064c3d2164b4b32b3aee4240e), uint256(0x25d1972ef52d20e65e7329bf1082423b7a07c13e76f7d855eb3d02592ee5084d)], [uint256(0x1e96f569b1b47ae53856c6453c08c65bbb8c0cbd528870c408d4748bff327c12), uint256(0x021eeaa80817f99bff86511ac7822abcd7265977608177c690a9e06075c9ddf8)]);
-        vk.delta = Pairing.G2Point([uint256(0x04c12fabff9616fe38c157fcb707892fc64900c49f1e741de40211f5b1a06213), uint256(0x2769ec9c58b724329eb2de4d2e18e722f2cafff8f88ab4ee46847ee9989b2213)], [uint256(0x16fe3db6ac28a443ec401b9a524bc6439cb86912324ad46cfb6209c2eda72490), uint256(0x0b76d93d992cdc01dda3263fb1f63cca88f97cecfd2654e1c04e33ca172b1499)]);
+        vk.alpha = Pairing.G1Point(uint256(0x080d902d798f24934ab1ae4654dff54caa1a32fbae43b447215427fa466ae13e), uint256(0x1221f8b42cd52d460df811f6560a89d05249043727636d7d454aa56212ce76cc));
+        vk.beta = Pairing.G2Point([uint256(0x152c4d76671cb6ddcccbf62d1f1c390eb28127900456da2fa7f3c4f47d92a2a5), uint256(0x097b5f015c0dab20fa110ed7937a13528fac496630e4dac2d539d239fce152da)], [uint256(0x2a3d0766a78c3cdb74be4b187a0bb4ca296c6853fcdfa154009e08f33cc279d0), uint256(0x1e01e0674c1b732449101c8345e565d0c629462b99114ef6e823025e771eac6b)]);
+        vk.gamma = Pairing.G2Point([uint256(0x16941b11f42a35a88ecaab5f41bc79a3cda5e6f77f8a99771d0d378980402169), uint256(0x255189d25f267eee0e7c182e534a32c2c52e7fbbf3b6820e44b41bbd85a6b413)], [uint256(0x1296695515f889be7449e3a8af22e80289d2caedf7c9d8c407e03ef55cd124ca), uint256(0x1379a700fc7c28759b61b410933bb2a9974b85b09ceb772512ac97982c206a0b)]);
+        vk.delta = Pairing.G2Point([uint256(0x0c08bd2c6fcf722c3c41e0ab55394934a2c30cb0d4d912a9fdf0b63f2250a516), uint256(0x131b65dec2d090f8191ac46e925fbb8b205640744cb38f13f6174552fd0695fc)], [uint256(0x03388b7d12c25d93ab7cad6af19ec49351bcad71f119a13adab7c46a56762a90), uint256(0x2a35fee4e4705dce830e40a3db5f1a28df5e12ec678ef0600fdc16c89a3676c9)]);
         vk.gamma_abc = new Pairing.G1Point[](3);
-        vk.gamma_abc[0] = Pairing.G1Point(uint256(0x04b362f0826ae1b253697d8fdd28605e66df0f47a8edc8ccb12eba9171372caf), uint256(0x18e3979bf75d184f79e5a82329e06d415ad4ea1582ec99bdadda76cefdcd8c64));
-        vk.gamma_abc[1] = Pairing.G1Point(uint256(0x059fe3775393ade61f24aff57fa0a038e8048cf924b3fba649bd7957d9b3bc81), uint256(0x205fec65b036f5ea5378005aa4c3bfac5ca8f42b5af915db91eb36ec57d8e730));
-        vk.gamma_abc[2] = Pairing.G1Point(uint256(0x244a354c75e7e84acb88a871aa66dc2bb31ce52cadf8eda0b02c18edc369092a), uint256(0x06d3193e42aa1128ed6ab0b8ad387452382f8e9c479ed57e516415b23002e470));
+        vk.gamma_abc[0] = Pairing.G1Point(uint256(0x25c600cc40550ee796ed0c0d4b1d22ade3043ddd5afc2cef657526767db70fc0), uint256(0x1bf94848d457a6532bc6806f2f665bc401bf38b7e96216b35270f29c05342556));
+        vk.gamma_abc[1] = Pairing.G1Point(uint256(0x1c0be56d84e0caa3206cf03e31e024837baa41401da6786d902eef34c373c544), uint256(0x023f56488038143cf4e4e782022773f562dca30deb534306d871f3d9b6768ae9));
+        vk.gamma_abc[2] = Pairing.G1Point(uint256(0x1837b7003ce7ac2f5b3c5595fe48d92e8bbea99c69a2472d96d74d22bf121d66), uint256(0x0ddb11bc6e3a9cf20376862e00b6f6c8948ce4c3ea9a2c550c584efa7c80c620));
     }
-    function verify(uint[] memory input, Proof memory proof) internal returns (uint) {
+    function verify(uint[] memory input, Proof memory proof) internal view returns (uint) {
         uint256 snark_scalar_field = 21888242871839275222246405745257275088548364400416034343698204186575808495617;
         VerifyingKey memory vk = verifyingKey();
         require(input.length + 1 == vk.gamma_abc.length);
@@ -578,26 +580,31 @@ contract Verifier {
             proof.a, proof.b,
             Pairing.negate(vk_x), vk.gamma,
             Pairing.negate(proof.c), vk.delta,
-            Pairing.negate(vk.a), vk.b)) return 1;
+            Pairing.negate(vk.alpha), vk.beta)) return 1;
         return 0;
     }
-    event Verified(string s);
     function verifyTx(
-        uint[2] memory a,
-        uint[2][2] memory b,
-        uint[2] memory c,
-        uint[2] memory input
-    ) public returns (bool r) {
-        Proof memory proof;
-        proof.a = Pairing.G1Point(a[0], a[1]);
-        proof.b = Pairing.G2Point([b[0][0], b[0][1]], [b[1][0], b[1][1]]);
-        proof.c = Pairing.G1Point(c[0], c[1]);
-        uint[] memory inputValues = new uint[](input.length);
+        uint[2] memory a, uint[2][2] memory b, uint[2] memory c, uint[2] memory input
+    ) public view returns (bool r) {
+
+        uint[] memory inputValues = new uint[](2);
+
         for(uint i = 0; i < input.length; i++){
             inputValues[i] = input[i];
         }
+
+        Proof memory proof;
+
+        proof.a.X = a[0];
+        proof.a.Y = a[1];
+
+        proof.b.X = b[0];
+        proof.b.Y = b[1];
+
+        proof.c.X = c[0];
+        proof.c.Y = c[1];
+
         if (verify(inputValues, proof) == 0) {
-            emit Verified("Transaction successfully verified.");
             return true;
         } else {
             return false;
