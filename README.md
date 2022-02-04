@@ -26,6 +26,13 @@ def main(private field a, field b) -> (field):
 7. zokrates export-verifier
 ```
 
+### Versions
+```
+Node: v15.11.0
+Truffle: v5.2.4
+Solidity: ^0.5.0
+```
+
 ### Migrate 
 ```
 MBPdehdominguez:eth-contracts hdominguez$ truffle migrate --network rinkeby --reset
