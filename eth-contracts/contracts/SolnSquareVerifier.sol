@@ -37,21 +37,6 @@ contract SolnSquareVerifier is ERC721Mintable {
         emit solutionAdded(index, _address);
     }
 
-//    struct G1Point {
-//        uint X;
-//        uint Y;
-//    }
-//
-//    struct G2Point {
-//        uint[2] X;
-//        uint[2] Y;
-//    }
-//
-//    struct Proof {
-//        G1Point a;
-//        G2Point b;
-//        G1Point c;
-//    }
 
     // Create a function to mint new NFT only after the solution has been verified
     //  - make sure the solution is unique (has not been used before)
