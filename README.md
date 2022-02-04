@@ -18,6 +18,69 @@ def main(private field a, field b) -> (field):
 
 ### Migrate 
 ```
+MBPdehdominguez:eth-contracts hdominguez$ truffle migrate --network rinkeby --reset
+
+Migrations dry-run (simulation)
+===============================
+> Network name:    'rinkeby-fork'
+> Network id:      4
+> Block gas limit: 30000000 (0x1c9c380)
+
+
+1_initial_migration.js
+======================
+
+   Replacing 'Migrations'
+   ----------------------
+   > block number:        10111371
+   > block timestamp:     1643992832
+   > account:             0x9AC86711b5b63f99bf531cF63660287f2B73e61A
+   > balance:             2.201902545965445658
+   > gas used:            210237 (0x3353d)
+   > gas price:           2 gwei
+   > value sent:          0 ETH
+   > total cost:          0.000420474 ETH
+
+   -------------------------------------
+   > Total cost:         0.000420474 ETH
+
+
+2_deploy_contracts.js
+=====================
+
+   Deploying 'SquareVerifier'
+   --------------------------
+   > block number:        10111373
+   > block timestamp:     1643992840
+   > account:             0x9AC86711b5b63f99bf531cF63660287f2B73e61A
+   > balance:             2.199862477965445658
+   > gas used:            992671 (0xf259f)
+   > gas price:           2 gwei
+   > value sent:          0 ETH
+   > total cost:          0.001985342 ETH
+
+
+   Replacing 'SolnSquareVerifier'
+   ------------------------------
+   > block number:        10111374
+   > block timestamp:     1643992883
+   > account:             0x9AC86711b5b63f99bf531cF63660287f2B73e61A
+   > balance:             2.193521125965445658
+   > gas used:            3170676 (0x306174)
+   > gas price:           2 gwei
+   > value sent:          0 ETH
+   > total cost:          0.006341352 ETH
+
+   -------------------------------------
+   > Total cost:         0.008326694 ETH
+
+
+Summary
+=======
+> Total deployments:   3
+> Final cost:          0.008747168 ETH
+
+
 Starting migrations...
 ======================
 > Network name:    'rinkeby'
@@ -92,6 +155,7 @@ Summary
 =======
 > Total deployments:   3
 > Final cost:          0.09138768 ETH
+
 ```
 
 ### OPENSEA
