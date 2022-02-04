@@ -316,8 +316,8 @@ contract usingOraclize {
     }
 
     function oraclize_setNetwork(uint8 _networkID) internal returns (bool _networkSet) {
-      return oraclize_setNetwork();
-      _networkID; // silence the warning and remain backwards compatible
+        return oraclize_setNetwork();
+        _networkID;
     }
 
     function oraclize_setNetworkName(string memory _network_name) internal {
@@ -369,8 +369,8 @@ contract usingOraclize {
     }
 
     function __callback(bytes32 _myid, string memory _result, bytes memory _proof) public {
-      return;
-      _myid; _result; _proof; // Silence compiler warnings
+        return;
+        _myid; _result; _proof;
     }
 
     function oraclize_getPrice(string memory _datasource) oraclizeAPI internal returns (uint _queryPrice) {
@@ -408,7 +408,7 @@ contract usingOraclize {
     function oraclize_query(string memory _datasource, string memory _arg, uint _gasLimit) oraclizeAPI internal returns (bytes32 _id) {
         uint price = oraclize.getPrice(_datasource, _gasLimit);
         if (price > 1 ether + tx.gasprice * _gasLimit) {
-           return 0; // Unexpectedly high price
+            return 0;
         }
         return oraclize.query_withGasLimit.value(price)(0, _datasource, _arg, _gasLimit);
     }
@@ -986,7 +986,7 @@ contract usingOraclize {
         for (uint i = 0; i < bresult.length; i++) {
             if ((uint(uint8(bresult[i])) >= 48) && (uint(uint8(bresult[i])) <= 57)) {
                 if (decimals) {
-                   if (_b == 0) break;
+                    if (_b == 0) break;
                     else _b--;
                 }
                 mint *= 10;
@@ -1015,11 +1015,11 @@ contract usingOraclize {
         for (uint i = 0; i < bresult.length; i++) {
             if ((uint(uint8(bresult[i])) >= 48) && (uint(uint8(bresult[i])) <= 57)) {
                 if (decimals) {
-                   if (_b == 0) {
-                       break;
-                   } else {
-                       _b--;
-                   }
+                    if (_b == 0) {
+                        break;
+                    } else {
+                        _b--;
+                    }
                 }
                 mint *= 10;
                 mint += uint(uint8(bresult[i])) - 48;
@@ -1296,18 +1296,18 @@ contract usingOraclize {
         assembly {
             r := mload(add(_sig, 32))
             s := mload(add(_sig, 64))
-            /*
-             Here we are loading the last 32 bytes. We exploit the fact that
-             'mload' will pad with zeroes if we overread.
-             There is no 'mload8' to do this, but that would be nicer.
-            */
+        /*
+         Here we are loading the last 32 bytes. We exploit the fact that
+         'mload' will pad with zeroes if we overread.
+         There is no 'mload8' to do this, but that would be nicer.
+        */
             v := byte(0, mload(add(_sig, 96)))
-            /*
-              Alternative solution:
-              'byte' is not working due to the Solidity parser, so lets
-              use the second best option, 'and'
-              v := and(mload(add(_sig, 65)), 255)
-            */
+        /*
+          Alternative solution:
+          'byte' is not working due to the Solidity parser, so lets
+          use the second best option, 'and'
+          v := and(mload(add(_sig, 65)), 255)
+        */
         }
         /*
          albeit non-transactional signatures are not specified by the YP, one would expect it
