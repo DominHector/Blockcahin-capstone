@@ -1,4 +1,4 @@
-var SquareVerifier = artifacts.require("./SquareVerifier.sol");
+var SquareVerifier = artifacts.require("./verifier.sol");
 var SolnSquareVerifier = artifacts.require("./SolnSquareVerifier.sol");
 
 module.exports = function(deployer) {
