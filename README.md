@@ -32,8 +32,10 @@ def main(private field a, field b) -> (field):
 7. zokrates export-verifier
 ```
 
-### Tests 
+### Tests - cd eth-contracts/test
+#### truffle test TestERC721Mintable.js 
 ```
+
   Contract: TestERC721Mintable
     match erc721 spec
       ✓ should return total supply (78ms)
@@ -45,13 +47,14 @@ result [object Object]
       ✓ should fail when minting when address is not contract owner
       ✓ should return contract owner (170ms)
 ```
+#### truffle test TestSolnSquareVerifier.js
 ```
   Contract: SolnSquareVerifier
     Test - SolnSquareVerifier
       ✓ should add new solutions (135ms)
       ✓ should mint tokens for contract (1017ms)
 ```
-
+#### truffle test TestSquareVerifier.js
 ```
   Contract: TestVerifier
     Exercise Verifier
