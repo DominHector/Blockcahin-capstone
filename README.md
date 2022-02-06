@@ -35,7 +35,6 @@ def main(private field a, field b) -> (field):
 ### Tests - cd eth-contracts/test
 #### truffle test TestERC721Mintable.js 
 ```
-
   Contract: TestERC721Mintable
     match erc721 spec
       ✓ should return total supply (78ms)
