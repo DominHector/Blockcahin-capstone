@@ -495,7 +495,7 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
     string private _baseTokenURI;
 
     // create private mapping of tokenId's to token uri's called '_tokenURIs'
-    mapping(uint256 => string) private _tokenURIs;
+    mapping (uint256 => string) private _tokenURIs;
 
     bytes4 private constant _INTERFACE_ID_ERC721_METADATA = 0x5b5e139f;
     /*
@@ -508,40 +508,46 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
 
     constructor (string memory name, string memory symbol, string memory baseTokenURI) public {
         // set instance var values
-        _name = name;
-        _symbol = symbol;
-        _baseTokenURI = baseTokenURI;
 
         _registerInterface(_INTERFACE_ID_ERC721_METADATA);
+
+        _name         = name;
+        _symbol       = symbol;
+        _baseTokenURI = baseTokenURI;
     }
 
     // create external getter functions for name, symbol, and baseTokenURI
-    function getName() public view returns(string memory) {
+
+    function name() public view returns (string memory) {
         return _name;
     }
 
-    function getSymbol() public view returns(string memory) {
+    function symbol() public view returns (string memory) {
         return _symbol;
     }
 
-    function getBaseTokenURI() public view returns(string memory) {
+    function baseTokenURI() public view returns (string memory) {
         return _baseTokenURI;
     }
 
+
     function tokenURI(uint256 tokenId) external view returns (string memory) {
-        require(_exists(tokenId), "Token not exists");
+        require(_exists(tokenId));
+
         return _tokenURIs[tokenId];
     }
 
 
     // Create an internal function to set the tokenURI of a specified tokenId
-    function _setTokenURI(uint256 tokenId) internal{
     // It should be the _baseTokenURI + the tokenId in string form
     // TIP #1: use strConcat() from the imported oraclizeAPI lib to set the complete token URI
     // TIP #2: you can also use uint2str() to convert a uint to a string
-        // see https://github.com/oraclize/ethereum-api/blob/master/oraclizeAPI_0.5.sol for strConcat()
+    // see https://github.com/oraclize/ethereum-api/blob/master/oraclizeAPI_0.5.sol for strConcat()
     // require the token exists before setting
-        require(_exists(tokenId), "Token not exists");
+
+    function setTokenURI(uint256 tokenId) internal {
+        require(_exists(tokenId));
+
         _tokenURIs[tokenId] = strConcat(_baseTokenURI, uint2str(tokenId));
     }
 
@@ -557,7 +563,7 @@ contract ERC721Mintable is ERC721Metadata('PenelaToken', 'PNL', 'https://s3-us-w
     returns(bool)
     {
         super._mint(to, tokenId);
-        super._setTokenURI(tokenId);
+        super.setTokenURI(tokenId);
         return true;
     }
 }

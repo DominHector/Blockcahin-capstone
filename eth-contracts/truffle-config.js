@@ -1,5 +1,5 @@
 var HDWalletProvider = require('truffle-hdwallet-provider');
-var mnemonicLocal = 'peace clean update social major nation elephant lyrics toast scan cloud lamp';
+var mnemonicLocal = 'fish skate trend copy ability hazard dismiss enroll orchard border grab degree';
 var mnemonicRinkeby = 'skull bike patrol express claw insane gap impulse address violin addict carry';
 var infuraKey = 'a93c26ceee2d4ccbbf46aac6223fff29';
 

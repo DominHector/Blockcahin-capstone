@@ -205,9 +205,9 @@ Summary
 
 ### OPENSEA
 
-https://testnets.opensea.io/assets/0x1493161bd7ee3c94c82be422aad7479d93bab00f/1
+https://testnets.opensea.io/collection/penelatoken
 
-Contract: 0x1493161Bd7eE3c94C82BE422aAD7479d93BAB00F
+Contract: 0xc7c3feaa438b8e7a7a3aa85d2d5abe4d7f3a1ad5
 
 Account owner: 0x9AC86711b5b63f99bf531cF63660287f2B73e61A
 
@@ -464,6 +464,21 @@ Account buyer: 0x805B26d27C8775D16cAD6fA86aA9e3BAc0881e5E
     },
     {
       "constant": true,
+      "inputs": [],
+      "name": "baseTokenURI",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
       "inputs": [
         {
           "internalType": "uint256",
@@ -486,57 +501,12 @@ Account buyer: 0x805B26d27C8775D16cAD6fA86aA9e3BAc0881e5E
     {
       "constant": true,
       "inputs": [],
-      "name": "getBaseTokenURI",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "getName",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
       "name": "getOwner",
       "outputs": [
         {
           "internalType": "address",
           "name": "",
           "type": "address"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "getSymbol",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
         }
       ],
       "payable": false,
@@ -593,6 +563,21 @@ Account buyer: 0x805B26d27C8775D16cAD6fA86aA9e3BAc0881e5E
       ],
       "payable": false,
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "name",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -721,6 +706,21 @@ Account buyer: 0x805B26d27C8775D16cAD6fA86aA9e3BAc0881e5E
           "internalType": "bool",
           "name": "",
           "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "symbol",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
         }
       ],
       "payable": false,
@@ -975,7 +975,7 @@ Account buyer: 0x805B26d27C8775D16cAD6fA86aA9e3BAc0881e5E
           "type": "uint256[2]"
         }
       ],
-      "name": "getVerifierKey",
+      "name": "_verifierKey",
       "outputs": [
         {
           "internalType": "bytes32",

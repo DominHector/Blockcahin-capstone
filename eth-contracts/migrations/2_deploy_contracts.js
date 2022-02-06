@@ -20,9 +20,9 @@ module.exports = function(deployer) {
       require("../../zokrates/code/square/proof_9.json"),
     ];
 
-    var items = 10;
+    var items = 6; // There are six items in https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/
     for (let i = 0; i < items ; i++) {
-      var item = i+1;
+      var item = i;
       var { proof: { a, b, c }, inputs: inputs } = proof[i];
       await contract.mintToken(account, item, a, b, c, inputs, {from:account});
     }
